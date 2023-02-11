@@ -1,7 +1,7 @@
 import * as Comlink from "comlink"
 import { WebAssemblyMainExports } from "./wasm"
 
-const wasm = WebAssembly.instantiateStreaming(fetch('/main.wasm'), {
+const wasm = WebAssembly.instantiateStreaming(fetch(import.meta.env.BASE_URL + 'main.wasm'), {
   env: {}
 }).then(res => res.instance.exports as WebAssemblyMainExports)
 
