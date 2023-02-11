@@ -1,11 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-const App = () => {
-  return (
-    <h1>App</h1>
-  )
-}
+import { App } from './app'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
