@@ -1,17 +1,17 @@
 import * as Comlink from "comlink"
+import { WebAssemblyMainExports } from "./wasm"
 
 const wasm = WebAssembly.instantiateStreaming(fetch('/main.wasm'), {
   env: {}
-}).then(res => res.instance.exports)
+}).then(res => res.instance.exports as WebAssemblyMainExports)
 
 export class Main {
   async add(a: number, b: number): Promise<number> {
-    return (await wasm as any).add(a, b)
+    return (await wasm).add(a, b)
   }
 
   async primeFactorize(N: bigint): Promise<bigint[]> {
-    const { memory } = await wasm as { memory: WebAssembly.Memory }
-    const { prime_factorize, get_array_len } = await wasm as any
+    const { memory, prime_factorize, get_array_len } = await wasm
 
     const digit = 17n
 
