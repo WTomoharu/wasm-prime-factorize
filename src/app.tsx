@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Box, Grid, Input } from "@chakra-ui/react"
+import { Box, Grid, Heading, Input } from "@chakra-ui/react"
 import { LoadableButton } from "./components/loadable-button"
 import { JsWorker } from "./workers/js-worker/client"
 import { WasmWorker } from "./workers/wasm-worker/client"
@@ -10,6 +10,15 @@ export const App = () => {
 
   return (
     <Box maxW="400px" mx="auto">
+      <Heading
+        as='h1'
+        size='lg'
+        textAlign="center"
+        mt="2"
+        mb="4"
+      >
+        一京桁を素因数分解したい！
+      </Heading>
       <Box
         m="2"
       >
