@@ -1,12 +1,53 @@
 import { useState } from "react"
-import { Box, Grid, Heading, Input } from "@chakra-ui/react"
+import { Box, Button, Grid, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react"
 import { LoadableButton } from "./components/loadable-button"
 import { JsWorker } from "./workers/js-worker/client"
 import { WasmWorker } from "./workers/wasm-worker/client"
 import { Candidates } from "./components/candidates"
 
+function formatTime(time: number) {
+  if (1000 <= time) {
+    return (time / (10 ** 3)).toFixed(2) + "秒"
+  } else {
+    return (time / (10 ** 3)).toFixed(3) + "秒"
+  }
+}
+
+function formatPrimeNumbers(numbers: bigint[]) {
+  return numbers.map(n => n.toString()).join(" × ")
+}
+
+
+type Result = {
+  type: "Wasm" | "JS"
+  time: number
+  source: bigint
+  numbers: bigint[]
+}
+
 export const App = () => {
   const [value, setValue] = useState("67447397074609339")
+
+  const [results, setResults] = useState<Result[]>([])
+
+  const pushResult = (result: Result) => {
+    setResults(results => [...results, result])
+  }
+
+  const [isOpenResultModal, setIsOpenResultModal] = useState(false)
+
+  const openResultModal = () => {
+    if (isOpenResultModal) {
+      setIsOpenResultModal(false)
+      setIsOpenResultModal(true)
+    } else {
+      setIsOpenResultModal(true)
+    }
+  }
+
+  const closeResultModal = () => {
+    setIsOpenResultModal(false)
+  }
 
   return (
     <Box maxW="400px" mx="auto">
@@ -46,10 +87,11 @@ export const App = () => {
           fontSize="2xl"
           onClick={async () => {
             const start = performance.now()
-            const res = await JsWorker.primeFactorize(BigInt(value))
+            const numbers = await JsWorker.primeFactorize(BigInt(value))
             const end = performance.now()
 
-            console.log("js", end - start, res)
+            pushResult({ type: "JS", time: end - start, source: BigInt(value), numbers })
+            openResultModal()
           }}
         >
           JS Worker
@@ -60,15 +102,35 @@ export const App = () => {
           fontSize="2xl"
           onClick={async () => {
             const start = performance.now()
-            const res = await WasmWorker.primeFactorize(BigInt(value))
+            const numbers = await WasmWorker.primeFactorize(BigInt(value))
             const end = performance.now()
 
-            console.log("wasm", end - start, res)
+            pushResult({ type: "Wasm", time: end - start, source: BigInt(value), numbers })
+            openResultModal()
           }}
         >
           Wasm Worker
         </LoadableButton>
       </Grid>
+
+      {0 < results.length && (
+        <Modal isOpen={isOpenResultModal} onClose={closeResultModal}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{results[results.length - 1].type}での結果({formatTime(results[results.length - 1].time)})</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {formatPrimeNumbers(results[results.length - 1].numbers)}
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme='blue' mr={3} onClick={closeResultModal}>
+                OK
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   )
 }
