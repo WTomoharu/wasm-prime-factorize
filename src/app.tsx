@@ -1,40 +1,56 @@
 import { useState } from "react"
+import { Box, Grid, Input } from "@chakra-ui/react"
+import { LoadableButton } from "./components/loadable-button"
 import { JsWorker } from "./workers/js-worker/client"
 import { WasmWorker } from "./workers/wasm-worker/client"
 
 export const App = () => {
-  const [num, setNum] = useState(67447397074609339n)
+  const [value, setValue] = useState("67447397074609339")
+
   return (
-    <>
-      <h1>App</h1>
-      <div>
-        <input
-          value={num.toString()}
-          onChange={e => setNum(BigInt(e.target.value))}
+    <Box maxW="400px" mx="auto">
+      <Box
+        m="2"
+      >
+        <Input
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          type="number"
         />
-      </div>
-      <div>
-        <button onClick={() => {
-          Promise.resolve().then(async () => {
+      </Box>
+
+      <Grid
+        templateColumns='1fr 1fr'
+      >
+        <LoadableButton
+          m="2"
+          h="80px"
+          fontSize="2xl"
+          onClick={async () => {
             const start = performance.now()
-            const res = await JsWorker.primeFactorize(num)
+            const res = await JsWorker.primeFactorize(BigInt(value))
             const end = performance.now()
+
             console.log("js", end - start, res)
-          })
-        }}>
+          }}
+        >
           JS Worker
-        </button>
-        <button onClick={() => {
-          Promise.resolve().then(async () => {
+        </LoadableButton>
+        <LoadableButton
+          m="2"
+          h="80px"
+          fontSize="2xl"
+          onClick={async () => {
             const start = performance.now()
-            const res = await WasmWorker.primeFactorize(num)
+            const res = await WasmWorker.primeFactorize(BigInt(value))
             const end = performance.now()
+
             console.log("wasm", end - start, res)
-          })
-        }}>
+          }}
+        >
           Wasm Worker
-        </button>
-      </div>
-    </>
+        </LoadableButton>
+      </Grid>
+    </Box>
   )
 }
