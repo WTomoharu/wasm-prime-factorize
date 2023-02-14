@@ -1,9 +1,9 @@
 import { Box, Button, ComponentWithAs, StackProps } from "@chakra-ui/react"
-import MersennePrimeNumbers from "../assets/prime-numbers.json"
+import PrimeNumbers from "../assets/prime-numbers.json"
 import { randomDigit, randomRamge } from "../utils/random"
 
 function primeNumber() {
-  return BigInt(MersennePrimeNumbers[randomRamge(0, MersennePrimeNumbers.length - 1)])
+  return BigInt(PrimeNumbers[randomRamge(0, PrimeNumbers.length - 1)])
 }
 
 export type CandidatesProps = Omit<StackProps, "onClick"> & {
