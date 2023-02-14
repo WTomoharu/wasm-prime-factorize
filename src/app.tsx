@@ -49,6 +49,28 @@ export const App = () => {
     setIsOpenResultModal(false)
   }
 
+  const [errors, setErrors] = useState<Error[]>([])
+
+  const pushError = (error: Error) => {
+    setErrors(errors => [...errors, error])
+  }
+
+  const [isOpenErrorModal, setIsOpenErrorModal] = useState(false)
+
+  const openErrorModal = () => {
+    if (isOpenErrorModal) {
+      setIsOpenErrorModal(false)
+      setIsOpenErrorModal(true)
+    } else {
+      setIsOpenErrorModal(true)
+    }
+  }
+
+  const closeErrorModal = () => {
+    setIsOpenErrorModal(false)
+  }
+
+
   return (
     <Box maxW="400px" mx="auto">
       <Heading
@@ -87,7 +109,11 @@ export const App = () => {
           fontSize="2xl"
           onClick={async () => {
             const start = performance.now()
-            const numbers = await JsWorker.primeFactorize(BigInt(value))
+            const numbers = await JsWorker.primeFactorize(BigInt(value)).catch(err => {
+              pushError(err)
+              openErrorModal()
+              throw err
+            })
             const end = performance.now()
 
             pushResult({ type: "JS", time: end - start, source: BigInt(value), numbers })
@@ -102,7 +128,11 @@ export const App = () => {
           fontSize="2xl"
           onClick={async () => {
             const start = performance.now()
-            const numbers = await WasmWorker.primeFactorize(BigInt(value))
+            const numbers = await WasmWorker.primeFactorize(BigInt(value)).catch(err => {
+              pushError(err)
+              openErrorModal()
+              throw err
+            })
             const end = performance.now()
 
             pushResult({ type: "Wasm", time: end - start, source: BigInt(value), numbers })
@@ -126,6 +156,25 @@ export const App = () => {
             <ModalFooter>
               <Button colorScheme='blue' mr={3} onClick={closeResultModal}>
                 OK
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {0 < errors.length && (
+        <Modal isOpen={isOpenErrorModal} onClose={closeErrorModal}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>エラー</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {errors[errors.length - 1].toString()}
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme='blue' mr={3} onClick={closeErrorModal}>
+                Close
               </Button>
             </ModalFooter>
           </ModalContent>
