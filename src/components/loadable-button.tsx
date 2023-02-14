@@ -8,13 +8,13 @@ export const LoadableButton: typeof Button = ({ children, onClick, ...props }) =
       {...props}
       onClick={onClick ? event => {
         (async () => {
+          setIsLoading(true)
           try {
-            setIsLoading(true)
             await (onClick(event) as PromiseLike<unknown> | unknown)
-            setIsLoading(false)
           } catch (err) {
             console.error(err)
           }
+          setIsLoading(false)
         })()
       } : undefined}
       isLoading={isLoading}
