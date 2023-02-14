@@ -16,17 +16,17 @@ export const Candidates: ComponentWithAs<"div", CandidatesProps> = ({ children, 
     <Box textAlign="center" mx="1" {...props}>
       <Button mx="1" px="2" py="0" fontSize="sm" onClick={e => {
         const element = e.target as HTMLButtonElement
-        const value = randomDigit(10)
+        const value = randomDigit(5)
         onClick?.(element.textContent ?? "", value, e)
       }}>
-        10桁(乱数)
+        一万桁(乱数)
       </Button>
       <Button mx="1" px="2" py="0" fontSize="sm" onClick={e => {
         const element = e.target as HTMLButtonElement
         const value = randomDigit(17)
         onClick?.(element.textContent ?? "", value, e)
       }}>
-        17桁(乱数)
+        一京桁(乱数)
       </Button>
       <Button mx="1" px="2" py="0" fontSize="sm" onClick={e => {
         const element = e.target as HTMLButtonElement
@@ -37,7 +37,7 @@ export const Candidates: ComponentWithAs<"div", CandidatesProps> = ({ children, 
         }
         onClick?.(element.textContent ?? "", value!, e)
       }}>
-        17桁(素数)
+        一京桁(素数)
       </Button>
     </Box>
   )
