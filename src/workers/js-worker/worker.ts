@@ -9,11 +9,8 @@ export class Main {
   primeFactorize(N: bigint) {
     const digit = 17n
 
-    console.log(`digits: ${N.toString().length}`)
-
     if (10n ** (digit) < N) {
-      console.log(`The accepted numbers are too large.`)
-      return []
+      throw `The accepted numbers are too large. digits: ${N.toString().length}`
     }
 
     return primeFactorize(N)

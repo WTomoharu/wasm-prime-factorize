@@ -15,11 +15,8 @@ export class Main {
 
     const digit = 17n
 
-    console.log(`digits: ${N.toString().length}`)
-
     if (10n ** (digit) < N) {
-      console.log(`The accepted numbers are too large.`)
-      return []
+      throw `The accepted numbers are too large. digits: ${N.toString().length}`
     }
 
     const pointer = prime_factorize(N)
